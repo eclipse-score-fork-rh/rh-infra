@@ -1,0 +1,60 @@
+name: fork-sync-nightly
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-baselibs-main:
+    uses: ./.github/workflows/fork_sync.yml
+    with:
+      upstream_repo: eclipse-score/baselibs
+      upstream_ref: main
+      target_repo: eclipse-score-fork-rh/baselibs
+      target_ref: main
+    secrets:
+      GIT_SYNC_SSH_KEY: ${{ secrets.GIT_SYNC_SSH_KEY }}
+
+  sync-communication-main:
+    uses: ./.github/workflows/fork_sync.yml
+    with:
+      upstream_repo: eclipse-score/communication
+      upstream_ref: main
+      target_repo: eclipse-score-fork-rh/communication
+      target_ref: main
+    secrets:
+      GIT_SYNC_SSH_KEY: ${{ secrets.GIT_SYNC_SSH_KEY }}
+
+  sync-orchestrator-main:
+    uses: ./.github/workflows/fork_sync.yml
+    with:
+      upstream_repo: eclipse-score/orchestrator
+      upstream_ref: main
+      target_repo: eclipse-score-fork-rh/orchestrator
+      target_ref: main
+    secrets:
+      GIT_SYNC_SSH_KEY: ${{ secrets.GIT_SYNC_SSH_KEY }}
+
+  sync-itf-main:
+    uses: ./.github/workflows/fork_sync.yml
+    with:
+      upstream_repo: eclipse-score/itf
+      upstream_ref: main
+      target_repo: eclipse-score-fork-rh/itf
+      target_ref: main
+    secrets:
+      GIT_SYNC_SSH_KEY: ${{ secrets.GIT_SYNC_SSH_KEY }}
+
+  sync-reference_integration-main:
+    uses: ./.github/workflows/fork_sync.yml
+    with:
+      upstream_repo: eclipse-score/reference_integration
+      upstream_ref: main
+      target_repo: eclipse-score-fork-rh/reference_integration
+      target_ref: main
+    secrets:
+      GIT_SYNC_SSH_KEY: ${{ secrets.GIT_SYNC_SSH_KEY }}

@@ -1,0 +1,93 @@
+name: fork-sync
+
+on:
+  workflow_call:
+    secrets:
+      GIT_SYNC_SSH_KEY:
+        required: true
+    inputs:
+      upstream_repo:
+        type: 'string'
+        description: 'Upstream repository (owner/repo), e.g. eclipse-score/baselibs'
+        default: 'eclipse-score/baselibs'
+      upstream_ref:
+        type: 'string'
+        description: 'Branch on upstream to sync from'
+        default: 'main'
+      target_repo:
+        type: 'string'
+        description: 'Target (forked) repository to push to'
+        default: 'eclipse-score-fork-rh/baselibs'
+      target_ref:
+        type: 'string'
+        description: 'Branch on this fork to update'
+        default: 'main'
+  workflow_dispatch:
+    inputs:
+      upstream_repo:
+        type: 'string'
+        description: 'Upstream repository (owner/repo), e.g. eclipse-score/baselibs'
+        default: 'eclipse-score/baselibs'
+      upstream_ref:
+        type: 'string'
+        description: 'Branch on upstream to sync from'
+        default: 'main'
+      target_repo:
+        type: 'string'
+        description: 'Target (forked) repository to push to'
+        default: 'eclipse-score-fork-rh/baselibs'
+      target_ref:
+        type: 'string'
+        description: 'Branch on this fork to update'
+        default: 'main'
+      
+permissions:
+  contents: write
+
+jobs:
+  rebase-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup SSH Key
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.GIT_SYNC_SSH_KEY }}
+
+      - name: Scan github.com
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+
+      - name: Create repository directory
+        run: |
+          mkdir -p /opt/rh
+       
+      - name: Fetch and Pull ${{ inputs.target_repo || github.event.inputs.target_repo }}
+        run: |
+          git clone -o origin -b $GIT_REF git@github.com:$GIT_REPO.git /opt/rh/$GIT_REPO
+        env:
+          GIT_REF: ${{ inputs.target_ref || github.event.inputs.target_ref }}
+          GIT_REPO: ${{ inputs.target_repo || github.event.inputs.target_repo }}
+
+      - name: Fetch and Rebase ${{ inputs.upstream_repo || github.event.inputs.upstream_repo }}/${{ inputs.target_ref || github.event.inputs.target_ref }}
+        run: |
+          git remote add upstream https://github.com/$GIT_REPO.git
+          git fetch upstream
+          git rebase upstream/$GIT_REF
+        env:
+          GIT_REF: ${{ inputs.target_ref || github.event.inputs.target_ref }}
+          GIT_REPO: ${{ inputs.target_repo || github.event.inputs.target_repo }}
+        working-directory: /opt/rh/${{ inputs.target_repo || github.event.inputs.target_repo }}
+      
+      - name: Configure Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com" 
+        working-directory: /opt/rh/${{ inputs.target_repo || github.event.inputs.target_repo }}
+
+      - name: Push ${{ inputs.target_repo || github.event.inputs.target_repo }}
+        run: |
+          git push origin $GIT_REF --force-with-lease
+        env:
+          GIT_REF: ${{ inputs.target_ref || github.event.inputs.target_ref }}
+        working-directory: /opt/rh/${{ inputs.target_repo || github.event.inputs.target_repo }}
