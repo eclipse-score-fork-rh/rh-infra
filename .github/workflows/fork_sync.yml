@@ -87,25 +87,26 @@ jobs:
         # !inputs.is_new_release END #
       
       # inputs.is_new_release BEGIN #
-      - name: Fetch ${{ inputs.upstream_repo || github.event.inputs.upstream_repo }}/{{ inputs.upstream_ref || github.event.inputs.upstream_ref }}
+      - name: Fetch ${{ inputs.target_repo || github.event.inputs.target_repo }}/{{ inputs.target_ref || github.event.inputs.target_ref }}
         run: |
-          git clone -o upstream -b $GIT_REF  https://github.com/$GIT_REPO.git /opt/rh/$GIT_REPO_UPSTREAM
-        env:
-          GIT_REF: ${{ inputs.upstream_ref || github.event.inputs.upstream_ref }}
-          GIT_REPO: ${{ inputs.upstream_repo || github.event.inputs.upstream_repo }}
-        if: ${{ fromJson(inputs.is_new_release) }} 
-      
-      - name: Create release branch ${{ inputs.target_ref || github.event.inputs.target_ref }}
-        run: |
-          git remote add origin git@github.com:$GIT_REPO.git
-          git fetch origin
-          git checkout -b $GIT_REF
+          git clone -o origin -b main git@github.com:$GIT_REPO.git /opt/rh/$GIT_REPO
+          (cd /opt/rh/$GIT_REPO; git checkout -b $GIT_REF)
         env:
           GIT_REF: ${{ inputs.target_ref || github.event.inputs.target_ref }}
           GIT_REPO: ${{ inputs.target_repo || github.event.inputs.target_repo }}
+        if: ${{ fromJson(inputs.is_new_release) }} 
+      
+      - name: Reset to ${{ inputs.upstream_ref || github.event.inputs.upstream_ref }}
+        run: |
+          git remote add upstream https://github.com/$GIT_REPO.git
+          git fetch upstream
+          git reset --hard $GIT_REF
+        env:
+          GIT_REF: ${{ inputs.upstream_ref || github.event.inputs.upstream_ref }}
+          GIT_REPO: ${{ inputs.upstream_repo || github.event.inputs.upstream_repo }}
         working-directory: /opt/rh/${{ inputs.target_repo || github.event.inputs.target_repo }}
         if: ${{ fromJson(inputs.is_new_release) }} 
-        # !inputs.is_new_release END #
+        # inputs.is_new_release END #
 
       - name: Configure Git user
         run: |
