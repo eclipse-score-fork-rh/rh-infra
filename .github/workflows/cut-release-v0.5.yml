@@ -1,110 +1,118 @@
-name: fork-sync-nightly
+name: cut-release-v0.5
 
 on:
-  schedule:
-    - cron: '0 0 * * *'
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  sync-baselibs-main:
+  release-baselibs:
     uses: ./.github/workflows/fork_sync.yml
     with:
       upstream_repo: eclipse-score/baselibs
       upstream_ref: v0.1.3
       target_repo: eclipse-score-fork-rh/baselibs
       target_ref: v0.5
+      is_new_release: true
     secrets:
       GIT_SYNC_SSH_KEY: ${{ secrets.GIT_SYNC_SSH_KEY }}
 
-  sync-communication-main:
+  release-communication:
     uses: ./.github/workflows/fork_sync.yml
     with:
       upstream_repo: eclipse-score/communication
       upstream_ref: v0.1.1
       target_repo: eclipse-score-fork-rh/communication
       target_ref: v0.5
+      is_new_release: true
     secrets:
       GIT_SYNC_SSH_KEY: ${{ secrets.GIT_SYNC_SSH_KEY }}
 
-  sync-orchestrator-main:
+  release-orchestrator:
     uses: ./.github/workflows/fork_sync.yml
     with:
       upstream_repo: eclipse-score/orchestrator
       upstream_ref: v0.0.3
       target_repo: eclipse-score-fork-rh/orchestrator
       target_ref: v0.5
+      is_new_release: true
     secrets:
       GIT_SYNC_SSH_KEY: ${{ secrets.GIT_SYNC_SSH_KEY }}
 
-  sync-feo-main:
+  release-feo:
     uses: ./.github/workflows/fork_sync.yml
     with:
       upstream_repo: eclipse-score/feo
       upstream_ref: v1.0.2
       target_repo: eclipse-score-fork-rh/feo
       target_ref: v0.5
+      is_new_release: true
     secrets:
       GIT_SYNC_SSH_KEY: ${{ secrets.GIT_SYNC_SSH_KEY }}
 
-  sync-persistency-main:
+  release-persistency:
     uses: ./.github/workflows/fork_sync.yml
     with:
       upstream_repo: eclipse-score/persistency
       upstream_ref: v0.2.1
       target_repo: eclipse-score-fork-rh/persistency
       target_ref: v0.5
+      is_new_release: true
     secrets:
       GIT_SYNC_SSH_KEY: ${{ secrets.GIT_SYNC_SSH_KEY }}
   
-  sync-reference_integration-main:
+  release-reference_integration:
     uses: ./.github/workflows/fork_sync.yml
     with:
       upstream_repo: eclipse-score/reference_integration
       upstream_ref: v0.5.0-alpha
       target_repo: eclipse-score-fork-rh/reference_integration
       target_ref: v0.5
+      is_new_release: true
     secrets:
       GIT_SYNC_SSH_KEY: ${{ secrets.GIT_SYNC_SSH_KEY }}
 
-  sync-process_description-main:
+  release-process_description:
     uses: ./.github/workflows/fork_sync.yml
     with:
       upstream_repo: eclipse-score/process_description
       upstream_ref: main
       target_repo: eclipse-score-fork-rh/process_description
       target_ref: v0.5
+      is_new_release: true
     secrets:
       GIT_SYNC_SSH_KEY: ${{ secrets.GIT_SYNC_SSH_KEY }}
 
-  sync-docs-as-code-main:
+  release-docs-as-code:
     uses: ./.github/workflows/fork_sync.yml
     with:
       upstream_repo: eclipse-score/docs-as-code
       upstream_ref: main
       target_repo: eclipse-score-fork-rh/docs-as-code
       target_ref: v0.5
+      is_new_release: true
     secrets:
       GIT_SYNC_SSH_KEY: ${{ secrets.GIT_SYNC_SSH_KEY }}
 
-  sync-tooling-main:
+  release-tooling:
     uses: ./.github/workflows/fork_sync.yml
     with:
       upstream_repo: eclipse-score/tooling
       upstream_ref: main
       target_repo: eclipse-score-fork-rh/tooling
       target_ref: v0.5
+      is_new_release: true
     secrets:
       GIT_SYNC_SSH_KEY: ${{ secrets.GIT_SYNC_SSH_KEY }}
 
-  sync-itf-main:
+  release-itf:
     uses: ./.github/workflows/fork_sync.yml
     with:
       upstream_repo: eclipse-score/itf
       upstream_ref: main
       target_repo: eclipse-score-fork-rh/itf
       target_ref: v0.5
+      is_new_release: true
     secrets:
       GIT_SYNC_SSH_KEY: ${{ secrets.GIT_SYNC_SSH_KEY }} 
