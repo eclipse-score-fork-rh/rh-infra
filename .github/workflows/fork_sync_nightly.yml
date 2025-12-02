@@ -39,16 +39,26 @@ jobs:
     secrets:
       GIT_SYNC_SSH_KEY: ${{ secrets.GIT_SYNC_SSH_KEY }}
 
-  sync-itf-main:
+  sync-feo-main:
     uses: ./.github/workflows/fork_sync.yml
     with:
-      upstream_repo: eclipse-score/itf
+      upstream_repo: eclipse-score/feo
       upstream_ref: main
-      target_repo: eclipse-score-fork-rh/itf
+      target_repo: eclipse-score-fork-rh/feo
       target_ref: main
     secrets:
       GIT_SYNC_SSH_KEY: ${{ secrets.GIT_SYNC_SSH_KEY }}
 
+  sync-persistency-main:
+    uses: ./.github/workflows/fork_sync.yml
+    with:
+      upstream_repo: eclipse-score/persistency
+      upstream_ref: main
+      target_repo: eclipse-score-fork-rh/persistency
+      target_ref: main
+    secrets:
+      GIT_SYNC_SSH_KEY: ${{ secrets.GIT_SYNC_SSH_KEY }}
+  
   sync-reference_integration-main:
     uses: ./.github/workflows/fork_sync.yml
     with:
@@ -58,3 +68,43 @@ jobs:
       target_ref: main
     secrets:
       GIT_SYNC_SSH_KEY: ${{ secrets.GIT_SYNC_SSH_KEY }}
+
+  sync-process_description-main:
+    uses: ./.github/workflows/fork_sync.yml
+    with:
+      upstream_repo: eclipse-score/process_description
+      upstream_ref: main
+      target_repo: eclipse-score-fork-rh/process_description
+      target_ref: main
+    secrets:
+      GIT_SYNC_SSH_KEY: ${{ secrets.GIT_SYNC_SSH_KEY }}
+
+  sync-docs-as-code-main:
+    uses: ./.github/workflows/fork_sync.yml
+    with:
+      upstream_repo: eclipse-score/docs-as-code
+      upstream_ref: main
+      target_repo: eclipse-score-fork-rh/docs-as-code
+      target_ref: main
+    secrets:
+      GIT_SYNC_SSH_KEY: ${{ secrets.GIT_SYNC_SSH_KEY }}
+
+  sync-tooling-main:
+    uses: ./.github/workflows/fork_sync.yml
+    with:
+      upstream_repo: eclipse-score/tooling
+      upstream_ref: main
+      target_repo: eclipse-score-fork-rh/tooling
+      target_ref: main
+    secrets:
+      GIT_SYNC_SSH_KEY: ${{ secrets.GIT_SYNC_SSH_KEY }}
+
+  sync-itf-main:
+    uses: ./.github/workflows/fork_sync.yml
+    with:
+      upstream_repo: eclipse-score/itf
+      upstream_ref: main
+      target_repo: eclipse-score-fork-rh/itf
+      target_ref: main
+    secrets:
+      GIT_SYNC_SSH_KEY: ${{ secrets.GIT_SYNC_SSH_KEY }} 
