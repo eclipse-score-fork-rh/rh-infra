@@ -22,6 +22,10 @@ on:
         type: 'string'
         description: 'Branch on this fork to update'
         default: 'main'
+      is_new_release:
+        type: 'boolean'
+        description: 'boolean flag to indicate the creation of a new release branch'
+        default: false
   workflow_dispatch:
     inputs:
       upstream_repo:
@@ -61,13 +65,14 @@ jobs:
       - name: Create repository directory
         run: |
           mkdir -p /opt/rh
-       
+      # !inputs.is_new_release BEGIN #
       - name: Fetch and Pull ${{ inputs.target_repo || github.event.inputs.target_repo }}
         run: |
           git clone -o origin -b $GIT_REF git@github.com:$GIT_REPO.git /opt/rh/$GIT_REPO
         env:
           GIT_REF: ${{ inputs.target_ref || github.event.inputs.target_ref }}
           GIT_REPO: ${{ inputs.target_repo || github.event.inputs.target_repo }}
+        if: ${{ ! fromJson(inputs.is_new_release) }} 
 
       - name: Fetch and Rebase ${{ inputs.upstream_repo || github.event.inputs.upstream_repo }}/${{ inputs.target_ref || github.event.inputs.target_ref }}
         run: |
@@ -78,7 +83,30 @@ jobs:
           GIT_REF: ${{ inputs.target_ref || github.event.inputs.target_ref }}
           GIT_REPO: ${{ inputs.target_repo || github.event.inputs.target_repo }}
         working-directory: /opt/rh/${{ inputs.target_repo || github.event.inputs.target_repo }}
+        if: ${{ ! fromJson(inputs.is_new_release) }}
+        # !inputs.is_new_release END #
       
+      # inputs.is_new_release BEGIN #
+      - name: Fetch ${{ inputs.upstream_repo || github.event.inputs.upstream_repo }}/{{ inputs.upstream_ref || github.event.inputs.upstream_ref }}
+        run: |
+          git clone -o upstream -b $GIT_REF  https://github.com/$GIT_REPO.git /opt/rh/$GIT_REPO_UPSTREAM
+        env:
+          GIT_REF: ${{ inputs.upstream_ref || github.event.inputs.upstream_ref }}
+          GIT_REPO: ${{ inputs.upstream_repo || github.event.inputs.upstream_repo }}
+        if: ${{ fromJson(inputs.is_new_release) }} 
+      
+      - name: Create release branch ${{ inputs.target_ref || github.event.inputs.target_ref }}
+        run: |
+          git remote add origin git@github.com:$GIT_REPO.git
+          git fetch origin
+          git checkout -b $GIT_REF
+        env:
+          GIT_REF: ${{ inputs.target_ref || github.event.inputs.target_ref }}
+          GIT_REPO: ${{ inputs.target_repo || github.event.inputs.target_repo }}
+        working-directory: /opt/rh/${{ inputs.target_repo || github.event.inputs.target_repo }}
+        if: ${{ fromJson(inputs.is_new_release) }} 
+        # !inputs.is_new_release END #
+
       - name: Configure Git user
         run: |
           git config user.name "github-actions[bot]"
